@@ -1,0 +1,65 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL_DEV")
+}
+
+model User {
+  id            Int      @id @default(autoincrement())
+  username      String   @unique
+  email         String   @unique
+  password      String
+  emailVerified Boolean  @default(false)
+  emailToken    String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  stickies      Sticky[] @relation("UserStickies")
+  tags          Tag[]    @relation("UserTags")
+}
+
+// Stickies are the main entity of the app, they are used to store the user's notes
+
+model Sticky {
+  id        Int       @id @default(autoincrement())
+  title     String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  content   String
+  priority  Int       @default(0)
+  isDeleted Boolean   @default(false)
+  isDone    Boolean   @default(false)
+  isPrivate Boolean   @default(false)
+  dueDate   DateTime?
+  tags      Tag[]     @relation("StickyTags")
+  userId    Int       @map(name: "sticky_user_id_fkey")
+  user      User      @relation("UserStickies", fields: [userId], references: [id])
+}
+
+// this object is for creating and storing Tags, one sticky can have multiple tags and one tag can be used for multiple stickies, tag is one title and description, which is optional
+
+model Tag {
+  id          Int      @id @default(autoincrement())
+  title       String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  description String?
+  stickies    Sticky[] @relation("StickyTags")
+  userId      Int      @map(name: "tag_user_id_fkey")
+  user        User     @relation("UserTags", fields: [userId], references: [id])
+}
+
+// In the above models, the relationships are defined as follows:
+// A User can have multiple Stickies (todos) and Tags (categories).
+// A Sticky can have multiple Tags, and a Tag can be associated with multiple Stickies.
+// Each Sticky and Tag is associated with a specific User.
+// The userId field in the Sticky and Tag models represents the foreign key relationship to the User model. It ensures that each Sticky and Tag is associated with a specific User.
+
+// To save the tags relation, you can use the many-to-many relationship between the Sticky and Tag models. This is achieved by having an array of Tag[] in the Sticky model and an array of Sticky[] in the Tag model. Prisma will automatically create the necessary join table to manage the relationship between Stickies and Tags.
+
+// With these Prisma models, you can now generate the necessary database tables and use them in your Nest.js backend and React web and React Native apps.

@@ -32,4 +32,11 @@ export class UsersService {
     // Delete the user
     return this.prisma.user.delete({ where: { id } });
   }
+
+  getUserAndStickies(userId: number) {
+    return this.prisma.user.findUnique({
+      where: { id: userId },
+      include: { stickies: true },
+    });
+  }
 }

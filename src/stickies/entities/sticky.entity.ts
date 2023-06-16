@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Sticky } from '@prisma/client';
 
-export class StickyEntity implements Sticky {
+export class StickiesEntity implements Sticky {
   @ApiProperty()
   id: number;
 
@@ -20,7 +20,10 @@ export class StickyEntity implements Sticky {
   @ApiProperty()
   isDeleted: boolean;
 
-  @ApiProperty()
+  @ApiProperty({
+    description: 'If true, only the user can see the sticky',
+    default: false,
+  })
   isPrivate: boolean;
 
   @ApiProperty()

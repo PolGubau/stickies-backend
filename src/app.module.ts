@@ -20,8 +20,8 @@ import { MailServiceController } from './mail/mail.controller';
 import { StickiesController } from './stickies/stickies.controller';
 import { TagsController } from './tags/tags.controller';
 import { TagStickyController } from './tag-sticky/tag-sticky.controller';
-
-// This is the app module, it is the root module.
+import { join } from 'path';
+import { ServeStaticModule } from '@nestjs/serve-static';
 
 @Module({
   imports: [
@@ -39,6 +39,10 @@ import { TagStickyController } from './tag-sticky/tag-sticky.controller';
     TagsModule,
     TagStickyModule,
     MailModule,
+
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'),
+    }),
   ],
   controllers: [AppController, AuthController],
   providers: [AppService, AuthService, UsersService],

@@ -1,7 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import * as swaggerUi from 'swagger-ui-dist';
 
@@ -17,10 +16,17 @@ async function bootstrap() {
     .setBasePath('swagger')
     .build();
 
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const app = await NestFactory.create(AppModule);
   app.useStaticAssets(join(__dirname, '..', 'public'));
 
   const document = SwaggerModule.createDocument(app, config);
+
+  // Add a route to serve the Swagger JSON file
+  app.get('/api/swagger.json', (req, res) => {
+    res.setHeader('Content-Type', 'application/json');
+    res.send(document);
+  });
+
   SwaggerModule.setup('swagger', app, document, {
     swaggerOptions: {
       // Specify the URL to the Swagger UI distribution file

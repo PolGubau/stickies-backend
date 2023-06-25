@@ -15,6 +15,7 @@ async function bootstrap() {
     .setContact('Pol', 'https://www.polgubau.com', 'gubaupol@gmail.com')
     .setBasePath('swagger')
     .build();
+
   const app = await NestFactory.create(AppModule);
 
   const document = SwaggerModule.createDocument(app, config);

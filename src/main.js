@@ -19,6 +19,7 @@ async function bootstrap() {
   app.useStaticAssets(join(__dirname, '..', 'public'));
 
   const document = SwaggerModule.createDocument(app, config);
+  console.log(document);
 
   // Add a route to serve the Swagger JSON file
   app.get('/api/swagger.json', (req, res) => {

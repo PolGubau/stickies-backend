@@ -1,6 +1,6 @@
 import { Controller, Post, Param, Delete } from '@nestjs/common';
 import { TagStickyService } from './tag-sticky.service';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @Controller('tags/:tagId/stickies/:stickyId')
 @ApiTags('Tags - Stickies')
@@ -8,6 +8,7 @@ export class TagStickyController {
   constructor(private tagStickyService: TagStickyService) {}
 
   @Post()
+  @ApiBearerAuth()
   @ApiOperation({
     summary: 'Link tag to sticky',
     description: 'Provide a tagId and a stickyId to link them together',
@@ -20,6 +21,7 @@ export class TagStickyController {
   }
 
   @Delete()
+  @ApiBearerAuth()
   @ApiOperation({
     summary: 'Delete link tag to sticky',
     description:

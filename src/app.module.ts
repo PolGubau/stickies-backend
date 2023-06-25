@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PrismaModule } from './prisma/prisma.module';
@@ -13,6 +13,13 @@ import { AuthModule } from './auth/auth.module';
 import { MailModule } from './mail/mail.module';
 import { TagsModule } from './tags/tags.module';
 import { TagStickyModule } from './tag-sticky/tag-sticky.module';
+import { isAuthenticated } from './app.middleware';
+import { UsersController } from './users/users.controller';
+import { UsersService } from './users/users.service';
+import { MailServiceController } from './mail/mail.controller';
+import { StickiesController } from './stickies/stickies.controller';
+import { TagsController } from './tags/tags.controller';
+import { TagStickyController } from './tag-sticky/tag-sticky.controller';
 
 // This is the app module, it is the root module.
 
@@ -34,6 +41,23 @@ import { TagStickyModule } from './tag-sticky/tag-sticky.module';
     MailModule,
   ],
   controllers: [AppController, AuthController],
-  providers: [AppService, AuthService],
+  providers: [AppService, AuthService, UsersService],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(isAuthenticated)
+      .exclude(
+        { path: 'auth/login', method: RequestMethod.POST }, // Exclude POST /users/login
+        { path: 'auth/signup', method: RequestMethod.POST }, // Exclude POST /users/register
+      )
+      .forRoutes(
+        UsersController,
+        AuthController,
+        TagStickyController,
+        TagsController,
+        StickiesController,
+        MailServiceController,
+      );
+  }
+}

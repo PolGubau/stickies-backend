@@ -16,6 +16,7 @@ import {
   ApiCreatedResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { StickiesEntity } from './entities/sticky.entity';
 import { StickyService } from './stickies.service';
@@ -26,6 +27,7 @@ export class StickiesController {
   constructor(private readonly StickyService: StickyService) {}
 
   @Get('findAllByUserID/:userId')
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Find all stickies by user id' })
   findAll(@Param('userId') userId: number) {
     return this.StickyService.findAllByUserID(+userId);
@@ -34,6 +36,7 @@ export class StickiesController {
   //
 
   @Get('getStickyAndItsTag/:stickyID')
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Find a sticky and its tags by sticky id' })
   getStickyAndItsTag(@Param('stickyID') stickyID: number) {
     return this.StickyService.getStickyAndItsTag(+stickyID);
@@ -42,6 +45,7 @@ export class StickiesController {
   //
 
   @Get(':id')
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Find one sticky by id' })
   async findOne(@Param('id') id: number): Promise<StickiesEntity> {
     const sticky = await this.StickyService.findOne(+id);
@@ -54,6 +58,7 @@ export class StickiesController {
   }
 
   @Post()
+  @ApiBearerAuth()
   @ApiCreatedResponse({ type: StickiesEntity })
   @ApiOperation({ summary: 'Create a new sticky' })
   create(@Body() createStickyDto: CreateStickyDto) {
@@ -61,6 +66,7 @@ export class StickiesController {
   }
 
   @Patch(':id')
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Update a sticky' })
   @ApiOkResponse({ type: StickiesEntity })
   update(
@@ -71,6 +77,7 @@ export class StickiesController {
   }
 
   @Delete(':id')
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Delete a sticky' })
   @ApiOkResponse({ type: StickiesEntity })
   remove(
@@ -79,7 +86,10 @@ export class StickiesController {
   ) {
     return this.StickyService.remove(+id, +userId);
   }
+
+  //
   @Delete(':userId')
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Delete all stickies by user id' })
   @ApiOkResponse({ type: StickiesEntity })
   removeAllByUserID(@Param('userId') userId: number) {

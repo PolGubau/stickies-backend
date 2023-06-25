@@ -2,15 +2,13 @@ import {
   Controller,
   Post,
   Body,
-  Get,
   UnauthorizedException,
-  Query,
   Param,
   Patch,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SignupDto } from './dto/singup.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 
@@ -39,6 +37,7 @@ export class AuthController {
   }
 
   @Patch('reset-password/:userId/:newPassword')
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Reset password' })
   async resetPassword(
     @Body() resetPasswordDto: ResetPasswordDto,
@@ -47,6 +46,7 @@ export class AuthController {
   }
 
   @Patch('verifyEmail/:userId/:token')
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Verify email by userId' })
   async verifyEmail(
     @Param('userId') userId: number,

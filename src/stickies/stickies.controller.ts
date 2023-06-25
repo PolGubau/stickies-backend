@@ -30,6 +30,17 @@ export class StickiesController {
   findAll(@Param('userId') userId: number) {
     return this.StickyService.findAllByUserID(+userId);
   }
+
+  //
+
+  @Get('getStickyAndItsTag/:stickyID')
+  @ApiOperation({ summary: 'Find a sticky and its tags by sticky id' })
+  getStickyAndItsTag(@Param('stickyID') stickyID: number) {
+    return this.StickyService.getStickyAndItsTag(+stickyID);
+  }
+
+  //
+
   @Get(':id')
   @ApiOperation({ summary: 'Find one sticky by id' })
   async findOne(@Param('id') id: number): Promise<StickiesEntity> {

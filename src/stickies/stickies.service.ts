@@ -101,4 +101,17 @@ export class StickyService {
     // Delete the sticky
     await this.prisma.sticky.deleteMany({ where: { userId } });
   }
+
+  async getStickyAndItsTag(stickyID: number): Promise<Sticky> {
+    const sticky = await this.prisma.sticky.findUnique({
+      where: { id: stickyID },
+    });
+    if (!sticky) {
+      throw new NotFoundException('sticky not found');
+    }
+    return this.prisma.sticky.findUnique({
+      where: { id: stickyID },
+      include: { tags: true },
+    });
+  }
 }

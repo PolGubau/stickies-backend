@@ -27,6 +27,12 @@ export class UsersController {
   getUserAndStickies(@Param('userId') userId: number) {
     return this.usersService.getUserAndStickies(+userId);
   }
+  @Get('findAllUserInfo/:userId')
+  @ApiOkResponse({ type: UserEntity })
+  // @UseGuards(JwtAuthGuard)
+  findAllUserInfo(@Param('userId') userId: number) {
+    return this.usersService.findAllUserInfo(+userId);
+  }
 
   @Get(':id')
   @ApiOkResponse({ type: UserEntity })

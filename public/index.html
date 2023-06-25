@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Stickies Backend</title>
+    <!-- Swagger UI CSS -->
+    <link rel="stylesheet" type="text/css" href="/swagger/swagger-ui.css" />
+</head>
+
+<body>
+    <!-- Swagger UI container -->
+    <div id="swagger-ui"></div>
+
+    <!-- Swagger UI JS -->
+    <script src="./swagger/swagger-ui-bundle.js"></script>
+    <script src="./swagger/swagger-ui-standalone-preset.js"></script>
+
+    <!-- Initialize Swagger UI -->
+    <script>
+        const ui = SwaggerUIBundle({
+            url: "/api/swagger.json",
+            dom_id: "#swagger-ui",
+            presets: [SwaggerUIBundle.presets.apis],
+            layout: "BaseLayout",
+            deepLinking: true,
+            showExtensions: true,
+        });
+    </script>
+</body>
+
+</html>

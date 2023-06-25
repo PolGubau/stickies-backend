@@ -13,7 +13,6 @@ async function bootstrap() {
     .setDescription('The Stickies API description')
     .setVersion('0.1')
     .setContact('Pol', 'https://www.polgubau.com', 'gubaupol@gmail.com')
-    .setBasePath('swagger')
     .build();
 
   const app = await NestFactory.create(AppModule);

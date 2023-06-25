@@ -12,6 +12,7 @@ import { AuthService } from './auth/auth.service';
 import { AuthModule } from './auth/auth.module';
 import { MailerServiceModule } from './mailer-service/mailer-service.module';
 import { TagsModule } from './tags/tags.module';
+import { TagStickyModule } from './tag-sticky/tag-sticky.module';
 
 // This is the app module, it is the root module.
 
@@ -29,6 +30,8 @@ import { TagsModule } from './tags/tags.module';
     AuthModule,
     MailerServiceModule,
     TagsModule,
+    TagsModule,
+    TagStickyModule,
   ],
   controllers: [AppController, AuthController],
   providers: [AppService, AuthService],

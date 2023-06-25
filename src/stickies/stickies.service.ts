@@ -28,7 +28,11 @@ export class StickyService {
     return sticky;
   }
 
-  findAllByUserID(userId: number): Promise<Sticky[]> {
+  async findAllByUserID(userId: number): Promise<Sticky[]> {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
     return this.prisma.sticky.findMany({
       where: {
         userId: userId, // Filter stickies by user ID
@@ -82,5 +86,19 @@ export class StickyService {
 
     // Delete the sticky
     await this.prisma.sticky.delete({ where: { id } });
+  }
+
+  async removeAllByUserID(userId: number): Promise<void> {
+    // Check if the sticky exists and belongs to the user
+    const existingSticky = await this.prisma.sticky.findFirst({
+      where: { userId },
+    });
+
+    if (!existingSticky) {
+      throw new NotFoundException('Sticky not found');
+    }
+
+    // Delete the sticky
+    await this.prisma.sticky.deleteMany({ where: { userId } });
   }
 }

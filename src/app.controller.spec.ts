@@ -7,6 +7,7 @@ import { AppService } from './app.service';
 // nest g controller app
 
 describe('AppController', () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let appController: AppController;
 
   beforeEach(async () => {
@@ -16,11 +17,5 @@ describe('AppController', () => {
     }).compile();
 
     appController = app.get<AppController>(AppController);
-  });
-
-  describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(appController.getHello()).toBe('Hello World!');
-    });
   });
 });

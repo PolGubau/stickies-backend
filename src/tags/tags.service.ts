@@ -8,6 +8,8 @@ import { TagEntity } from './entities/tag.entity';
 export class TagsService {
   constructor(private prisma: PrismaService) {}
 
+  // POSTS
+
   async create(createTagDTO: CreateTagDto): Promise<TagEntity> {
     // Check if the user exists
     const user = await this.prisma.user.findUnique({
@@ -25,6 +27,8 @@ export class TagsService {
 
     return tag;
   }
+
+  // GETS
 
   async findAllFromUser(userId: number) {
     const user = await this.prisma.user.findUnique({
@@ -51,13 +55,27 @@ export class TagsService {
     return tag;
   }
 
+  async getTagAndStickies(tagId: number) {
+    const tag = await this.prisma.tag.findUnique({ where: { id: tagId } });
+    if (!tag) {
+      throw new NotFoundException('Tag not found');
+    }
+
+    return this.prisma.tag.findUnique({
+      where: { id: tagId },
+      include: { stickies: true },
+    });
+  }
+
+  // UPDATES
+
   async update(id: number, updateTagDto: UpdateTagDto): Promise<TagEntity> {
     // Check if the tag exists
-    const existingSticky = await this.prisma.tag.findFirst({
+    const existingTag = await this.prisma.tag.findFirst({
       where: { id },
     });
 
-    if (!existingSticky) {
+    if (!existingTag) {
       throw new NotFoundException('Tag not found');
     }
 
@@ -79,7 +97,18 @@ export class TagsService {
     return newTag;
   }
 
+  // DELETES
   remove(id: number) {
     return `This action removes a #${id} tag`;
+  }
+
+  async removeAllByUserID(userId: number) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    await this.prisma.tag.deleteMany({ where: { userId } });
   }
 }

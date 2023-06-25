@@ -11,7 +11,12 @@ import {
 } from '@nestjs/common';
 import { CreateStickyDto } from './dto/create-sticky.dto';
 import { UpdateStickyDto } from './dto/update-sticky.dto';
-import { ApiTags, ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiOperation,
+} from '@nestjs/swagger';
 import { StickiesEntity } from './entities/sticky.entity';
 import { StickyService } from './stickies.service';
 
@@ -21,10 +26,12 @@ export class StickiesController {
   constructor(private readonly StickyService: StickyService) {}
 
   @Get('findAllByUserID/:userId')
+  @ApiOperation({ summary: 'Find all stickies by user id' })
   findAll(@Param('userId') userId: number) {
     return this.StickyService.findAllByUserID(+userId);
   }
   @Get(':id')
+  @ApiOperation({ summary: 'Find one sticky by id' })
   async findOne(@Param('id') id: number): Promise<StickiesEntity> {
     const sticky = await this.StickyService.findOne(+id);
 
@@ -37,11 +44,13 @@ export class StickiesController {
 
   @Post()
   @ApiCreatedResponse({ type: StickiesEntity })
+  @ApiOperation({ summary: 'Create a new sticky' })
   create(@Body() createStickyDto: CreateStickyDto) {
     return this.StickyService.create(createStickyDto, +createStickyDto.userId);
   }
 
   @Patch(':id')
+  @ApiOperation({ summary: 'Update a sticky' })
   @ApiOkResponse({ type: StickiesEntity })
   update(
     @Param('id', ParseIntPipe) id: number,
@@ -51,11 +60,18 @@ export class StickiesController {
   }
 
   @Delete(':id')
+  @ApiOperation({ summary: 'Delete a sticky' })
   @ApiOkResponse({ type: StickiesEntity })
   remove(
     @Param('id', ParseIntPipe) id: number,
     @Param('userId') userId: number,
   ) {
     return this.StickyService.remove(+id, +userId);
+  }
+  @Delete(':userId')
+  @ApiOperation({ summary: 'Delete all stickies by user id' })
+  @ApiOkResponse({ type: StickiesEntity })
+  removeAllByUserID(@Param('userId') userId: number) {
+    return this.StickyService.removeAllByUserID(+userId);
   }
 }

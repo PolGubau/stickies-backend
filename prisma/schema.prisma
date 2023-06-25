@@ -7,7 +7,8 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL_DEV")
+  url      = env("DATABASE_URL")
+  // url      = env("DATABASE_URL_DEV")
 }
 
 model User {
@@ -62,4 +63,3 @@ model Tag {
 
 // To save the tags relation, you can use the many-to-many relationship between the Sticky and Tag models. This is achieved by having an array of Tag[] in the Sticky model and an array of Sticky[] in the Tag model. Prisma will automatically create the necessary join table to manage the relationship between Stickies and Tags.
 
-// With these Prisma models, you can now generate the necessary database tables and use them in your Nest.js backend and React web and React Native apps.

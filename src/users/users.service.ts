@@ -11,8 +11,12 @@ export class UsersService {
     return this.prisma.user.findMany();
   }
 
-  findOne(id: number) {
-    return this.prisma.user.findUnique({ where: { id } });
+  async findOne(id: number) {
+    const user = await this.prisma.user.findUnique({ where: { id } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return user;
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
@@ -33,7 +37,12 @@ export class UsersService {
     return this.prisma.user.delete({ where: { id } });
   }
 
-  getUserAndStickies(userId: number) {
+  async getUserAndStickies(userId: number) {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
     return this.prisma.user.findUnique({
       where: { id: userId },
       include: { stickies: true },

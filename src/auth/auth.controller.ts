@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SignupDto } from './dto/singup.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 
@@ -18,6 +18,7 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('login')
+  @ApiOperation({ summary: 'Login' })
   async login(@Body() loginDto: LoginDto) {
     const user = await this.authService.validateUser(loginDto);
     if (!user) {
@@ -27,6 +28,7 @@ export class AuthController {
   }
 
   @Post('signup')
+  @ApiOperation({ summary: 'Signup' })
   async signup(
     @Body() signupDto: SignupDto,
   ): Promise<{ access_token: string }> {
@@ -35,6 +37,7 @@ export class AuthController {
   }
 
   @Post('reset-password')
+  @ApiOperation({ summary: 'Reset password' })
   async resetPassword(
     @Body() resetPasswordDto: ResetPasswordDto,
   ): Promise<void> {
@@ -42,6 +45,7 @@ export class AuthController {
   }
 
   @Get('verifyEmail')
+  @ApiOperation({ summary: 'Verify email by token' })
   async verifyEmail(@Query('token') token: string): Promise<void> {
     await this.authService.verifyEmail(token);
   }

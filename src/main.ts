@@ -15,12 +15,11 @@ async function bootstrap() {
     .setDescription('The Stickies API description')
     .setVersion('0.1')
     .setContact('Pol', 'https://www.polgubau.com', 'gubaupol@gmail.com')
-    .setBasePath('api')
 
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('', app, document);
 
   await app.listen(3000);
 }

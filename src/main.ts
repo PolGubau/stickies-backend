@@ -5,8 +5,6 @@ import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-
   const config = new DocumentBuilder()
     .setLicense('MIT', 'https://opensource.org/licenses/MIT')
     .setTermsOfService('https://www.polgubau.com/terms')
@@ -17,6 +15,8 @@ async function bootstrap() {
     .setContact('Pol', 'https://www.polgubau.com', 'gubaupol@gmail.com')
     .setBasePath('api')
     .build();
+
+  const app = await NestFactory.create(AppModule);
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);

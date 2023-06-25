@@ -39,6 +39,9 @@ import { ServeStaticModule } from '@nestjs/serve-static';
     TagsModule,
     TagStickyModule,
     MailModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'),
+    }),
   ],
   controllers: [AppController, AuthController],
   providers: [AppService, AuthService, UsersService],

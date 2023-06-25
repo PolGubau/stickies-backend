@@ -1,10 +1,12 @@
-// src/main.ts
-
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { NestExpressApplication } from '@nestjs/platform-express';
-import { join } from 'path';
+import * as express from 'express';
+import {
+  SwaggerUIBundle,
+  SwaggerUIStandalonePreset,
+  getAbsoluteFSPath,
+} from 'swagger-ui-dist';
 
 async function bootstrap() {
   const config = new DocumentBuilder()
@@ -18,11 +20,22 @@ async function bootstrap() {
     .setBasePath('swagger')
     .build();
 
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  app.useStaticAssets(join(__dirname, '..', 'public'));
+  const app = await NestFactory.create(AppModule);
+
+  // Serve Swagger UI from the `public` folder
+  app.use('/swagger', express.static(getAbsoluteFSPath()));
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('swagger', app, document);
+
+  // Custom route to serve Swagger UI HTML
+  app.get('/', (_req, res) => {
+    const swaggerHtml = SwaggerUIBundle({
+      url: '/swagger-json',
+      presets: [SwaggerUIStandalonePreset],
+    });
+    res.send(swaggerHtml);
+  });
 
   await app.listen(3000);
 }

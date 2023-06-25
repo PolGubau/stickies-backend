@@ -33,6 +33,11 @@ export class TagsController {
   findOne(@Param('id') id: number) {
     return this.tagsService.findOne(+id);
   }
+  @Get('tagAndStickies/:id')
+  @ApiOperation({ summary: 'Find one tag by id' })
+  getTagAndStickies(@Param('id') id: number) {
+    return this.tagsService.getTagAndStickies(+id);
+  }
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update a tag' })

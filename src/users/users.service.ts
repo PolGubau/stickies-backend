@@ -33,6 +33,12 @@ export class UsersService {
       throw new NotFoundException('User not found');
     }
 
+    // Delete associated Stickies
+    await this.prisma.sticky.deleteMany({ where: { userId: id } });
+
+    // Delete associated Tags
+    await this.prisma.tag.deleteMany({ where: { userId: id } });
+
     // Delete the user
     return this.prisma.user.delete({ where: { id } });
   }

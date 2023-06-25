@@ -41,7 +41,6 @@ export class UsersController {
   }
 
   @Delete(':id')
-  @ApiOkResponse({ type: UserEntity })
   remove(@Param('id') id: number) {
     return this.usersService.remove(+id);
   }

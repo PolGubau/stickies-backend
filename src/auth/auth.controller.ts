@@ -5,6 +5,8 @@ import {
   Get,
   UnauthorizedException,
   Query,
+  Param,
+  Patch,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
@@ -36,7 +38,7 @@ export class AuthController {
     return result;
   }
 
-  @Post('reset-password')
+  @Patch('reset-password/:userId/:newPassword')
   @ApiOperation({ summary: 'Reset password' })
   async resetPassword(
     @Body() resetPasswordDto: ResetPasswordDto,
@@ -44,9 +46,12 @@ export class AuthController {
     await this.authService.resetPassword(resetPasswordDto);
   }
 
-  @Get('verifyEmail')
-  @ApiOperation({ summary: 'Verify email by token' })
-  async verifyEmail(@Query('token') token: string): Promise<void> {
-    await this.authService.verifyEmail(token);
+  @Patch('verifyEmail/:userId/:token')
+  @ApiOperation({ summary: 'Verify email by userId' })
+  async verifyEmail(
+    @Param('userId') userId: number,
+    @Param('token') token: string,
+  ): Promise<void> {
+    await this.authService.verifyEmail(+userId, token);
   }
 }

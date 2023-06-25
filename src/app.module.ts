@@ -10,7 +10,7 @@ import { JwtModule } from '@nestjs/jwt/dist/jwt.module';
 import { AuthController } from './auth/auth.controller';
 import { AuthService } from './auth/auth.service';
 import { AuthModule } from './auth/auth.module';
-import { MailerServiceModule } from './mailer-service/mailer-service.module';
+import { MailModule } from './mail/mail.module';
 import { TagsModule } from './tags/tags.module';
 import { TagStickyModule } from './tag-sticky/tag-sticky.module';
 
@@ -28,10 +28,10 @@ import { TagStickyModule } from './tag-sticky/tag-sticky.module';
       signOptions: { expiresIn: '1h' },
     }),
     AuthModule,
-    MailerServiceModule,
     TagsModule,
     TagsModule,
     TagStickyModule,
+    MailModule,
   ],
   controllers: [AppController, AuthController],
   providers: [AppService, AuthService],

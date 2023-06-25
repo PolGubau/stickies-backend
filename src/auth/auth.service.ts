@@ -10,11 +10,16 @@ import { PrismaService } from '../prisma/prisma.service';
 import { User } from '@prisma/client';
 import { compare, hash } from 'bcrypt';
 import { SignupDto } from './dto/singup.dto';
+import { MailService } from 'src/mail/mail.service';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @Injectable()
 export class AuthService {
-  constructor(private jwtService: JwtService, private prisma: PrismaService) {}
+  constructor(
+    private jwtService: JwtService,
+    private prisma: PrismaService,
+    private mailService: MailService,
+  ) {}
 
   async validateUser(loginDto: LoginDto): Promise<User | null> {
     const { usernameOrEmail, password } = loginDto;
@@ -83,8 +88,17 @@ export class AuthService {
         username,
         email,
         password: hashedPassword,
+        emailToken: Math.random().toString(36).substring(2, 15),
+        emailVerified: false,
       },
     });
+
+    const gettedUser = await this.prisma.user.findUnique({
+      where: { id: user.id },
+    });
+
+    // Send the verification email
+    await this.mailService.sendEmailVerification(gettedUser.id);
 
     // Generate JWT token
     const payload = { username: user.username, sub: user.id };
@@ -93,40 +107,73 @@ export class AuthService {
     return { access_token };
   }
 
-  async resetPassword(resetPasswordDto: ResetPasswordDto): Promise<void> {
-    const { email, token, newPassword } = resetPasswordDto;
-
-    const user = await this.prisma.user.findUnique({ where: { email } });
+  async resetPassword(resetPassword: ResetPasswordDto): Promise<void> {
+    const { userId, newPassword } = resetPassword;
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
     if (!user) {
       throw new NotFoundException('User not found');
     }
 
-    const isTokenValid = await this.isTheTokenValid(token);
-    if (!isTokenValid) {
-      throw new UnauthorizedException('Invalid token');
+    if (newPassword === user.password) {
+      throw new ConflictException('New password is the same as the old one');
     }
 
-    // Update the user's password
-    user.password = newPassword;
+    if (!user.emailVerified) {
+      throw new ConflictException('Email not verified, compulsory to reset');
+    }
+
+    if (newPassword.length < 8) {
+      throw new ConflictException(
+        'Password must be at least 8 characters long',
+      );
+    }
+
+    if (newPassword.length > 50) {
+      throw new ConflictException(
+        'Password must be at most 50 characters long',
+      );
+    }
+
+    if (!newPassword.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/)) {
+      throw new ConflictException(
+        'Password must contain at least one uppercase letter, one lowercase letter and one number',
+      );
+    }
+
+    // Hash the new password
+    const hashedPassword = await hash(newPassword, 10);
+
     await this.prisma.user.update({
       where: { id: user.id },
-      data: { password: user.password },
+      data: { password: hashedPassword },
     });
   }
 
-  async verifyEmail(token: string): Promise<void> {
-    const user = await this.prisma.user.findFirst({
-      where: { emailToken: token },
+  async verifyEmail(userId: number, token: string): Promise<void> {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
     });
 
     if (!user) {
-      throw new NotFoundException('Invalid email verification token');
+      throw new NotFoundException('User not found');
+    }
+
+    if (user.emailVerified) {
+      throw new ConflictException('Email already verified');
+    }
+
+    if (!user.emailToken) {
+      throw new ConflictException('You dont have a token, ask for a new one');
+    }
+
+    if (user.emailToken !== token) {
+      throw new UnauthorizedException('Invalid token');
     }
 
     // Update the user's email verification status in the database
     await this.prisma.user.update({
       where: { id: user.id },
-      data: { emailVerified: true },
+      data: { emailVerified: true, emailToken: null },
     });
   }
 }

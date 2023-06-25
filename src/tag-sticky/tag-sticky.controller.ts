@@ -1,4 +1,4 @@
-import { Controller, Post, Param } from '@nestjs/common';
+import { Controller, Post, Param, Delete } from '@nestjs/common';
 import { TagStickyService } from './tag-sticky.service';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
@@ -19,7 +19,7 @@ export class TagStickyController {
     await this.tagStickyService.linkTagToSticky(+tagId, +stickyId);
   }
 
-  @Post('delete')
+  @Delete()
   @ApiOperation({
     summary: 'Delete link tag to sticky',
     description:

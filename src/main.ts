@@ -18,19 +18,18 @@ async function bootstrap() {
     .build();
 
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  app.useStaticAssets(join(__dirname, '..', 'public'));
-
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('swagger', app, document, {
+  SwaggerModule.setup('api-docs', app, document, {
     swaggerOptions: {
-      // Specify the URL to the Swagger UI distribution file
-      url: '/api/swagger.json',
+      url: '/api-docs-json', // Endpoint to serve the Swagger JSON file
     },
     customCss: swaggerUi.getAbsoluteFSPath(),
     customJs: swaggerUi.getAbsoluteFSPath(),
   });
 
+  // Serve static files from the "public" directory
+  app.useStaticAssets(join(__dirname, '..', 'public'));
+
   await app.listen(3000);
 }
-
 bootstrap();

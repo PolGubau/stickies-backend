@@ -1,10 +1,12 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { join } from 'path';
+import { SwaggerModule, DocumentBuilder, OpenAPIObject } from '@nestjs/swagger';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import * as swaggerUi from 'swagger-ui-dist';
 
 async function bootstrap() {
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
   const config = new DocumentBuilder()
     .setLicense('MIT', 'https://opensource.org/licenses/MIT')
     .setTermsOfService('https://www.polgubau.com/terms')
@@ -15,17 +17,7 @@ async function bootstrap() {
     .setContact('Pol', 'https://www.polgubau.com', 'gubaupol@gmail.com')
     .build();
 
-  const app = await NestFactory.create(AppModule);
-  app.useStaticAssets(join(__dirname, '..', 'public'));
-
   const document = SwaggerModule.createDocument(app, config);
-  console.log(document);
-
-  // Add a route to serve the Swagger JSON file
-  app.get('/api/swagger.json', (req, res) => {
-    res.setHeader('Content-Type', 'application/json');
-    res.send(document);
-  });
 
   SwaggerModule.setup('swagger', app, document, {
     swaggerOptions: {

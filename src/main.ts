@@ -6,7 +6,6 @@ import * as swaggerUi from 'swagger-ui-dist';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-
   const config = new DocumentBuilder()
     .setLicense('MIT', 'https://opensource.org/licenses/MIT')
     .setTermsOfService('https://www.polgubau.com/terms')
@@ -18,16 +17,13 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-
   SwaggerModule.setup('swagger', app, document, {
     swaggerOptions: {
-      // Specify the URL to the Swagger UI distribution file
       url: '/api/swagger.json',
     },
     customCss: swaggerUi.getAbsoluteFSPath(),
     customJs: swaggerUi.getAbsoluteFSPath(),
   });
-
   await app.listen(3000);
 }
 

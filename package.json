@@ -2,9 +2,9 @@
   "name": "stickies",
   "version": "0.0.1",
   "description": "",
-  "author": "",
+  "author": "Pol Gubau",
   "private": true,
-  "license": "UNLICENSED",
+  "license": "MIT",
   "engines": {
     "node": "16.17.1"
   },

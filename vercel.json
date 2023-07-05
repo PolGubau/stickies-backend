@@ -4,11 +4,9 @@
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "src/main.js",
+      "dest": "main.js",
       "methods": ["GET", "POST", "PUT", "DELETE", "PATCH"]
     }
   ],
-  "builds": [{ "use": "@vercel/node", "src": "src/main.js" }],
-
-  "rewrites": [{ "source": "/(.*)", "destination": "/" }]
+  "builds": [{ "use": "@vercel/node", "src": "main.js" }]
 }
